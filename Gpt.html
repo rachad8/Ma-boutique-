@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Mon Site de Vente</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 0; padding: 0; }
+    header, footer { background-color: #333; color: white; text-align: center; padding: 1em; }
+    main { padding: 1em; }
+    .article { border: 1px solid #ccc; padding: 1em; margin-bottom: 1em; }
+    .article img { max-width: 100%; height: auto; }
+    .admin-form { margin-top: 2em; border: 2px dashed #555; padding: 1em; }
+    input, textarea { display: block; width: 100%; margin: 0.5em 0; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Ma Boutique</h1>
+  </header>
+  <main>
+    <h2>Articles en vente</h2>
+    <div id="articles"></div>
+
+    <div class="admin-form">
+      <h3>Admin - Ajouter un article</h3>
+      <form id="adminForm" enctype="multipart/form-data">
+        <input type="password" id="adminPassword" placeholder="Mot de passe admin" required>
+        <input type="text" id="titre" placeholder="Titre de l'article" required>
+        <textarea id="description" placeholder="Description" required></textarea>
+        <input type="number" id="prix" placeholder="Prix" required>
+        <input type="file" id="image" accept="image/*" required>
+        <button type="submit">Ajouter</button>
+      </form>
+    </div>
+  </main>
+  <footer>
+    <p>© 2025 Ma Boutique</p>
+  </footer>
+
+  <script>
+    const articles = [];
+    const adminPassword = "supersecret"; // A remplacer par un système sécurisé côté serveur !
+
+    document.getElementById("adminForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+      const pw = document.getElementById("adminPassword").value;
+      if (pw !== adminPassword) {
+        alert("Mot de passe incorrect.");
+        return;
+      }
+
+      const titre = document.getElementById("titre").value;
+      const description = document.getElementById("description").value;
+      const prix = document.getElementById("prix").value;
+      const imageFile = document.getElementById("image").files[0];
+
+      if (imageFile) {
+        const reader = new FileReader();
+        reader.onload = function(event) {
+          const imageSrc = event.target.result;
+          articles.push({ titre, description, prix, imageSrc });
+          afficherArticles();
+        };
+        reader.readAsDataURL(imageFile); // Convertit l'image en base64 pour l'afficher
+      }
+
+      this.reset();
+    });
+
+    function afficherArticles() {
+      const container = document.getElementById("articles");
+      container.innerHTML = "";
+      articles.forEach((article) => {
+        container.innerHTML += `
+          <div class="article">
+            <h3>${article.titre}</h3>
+            <img src="${article.imageSrc}" alt="${article.titre}">
+            <p>${article.description}</p>
+            <strong>${article.prix} €</strong>
+          </div>
+        `;
+      });
+    }
+  </script>
+</body>
+</html>
